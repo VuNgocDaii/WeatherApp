@@ -1,20 +1,20 @@
 export class Day {
     time: Date;
     cityId: number;
-    temp: number;
-    apparentTemp: number;
-    weatherCode: number; 
-    humidity: number;
-    winSpeed: number;
-    constructor(newTime: Date, newCityId: number, newTemp: number, newApparentTemp: number, 
-                        newWeatherCode: number, newHumidity: number, newWinSpeed: number) {
-        ////
+    weatherCode: number;
+    maxTemp: number;
+    minTemp: number;
+    sunrise: Date;
+    sunset: Date;
+    maxWindSpeed: number;
+    constructor(newTime:Date, newCityId:number, newWeatherCode:number, newMaxTemp: number, newMinTemp:number, newSunrise: Date, newSunset: Date, newMaxWindSpeed:number) {
         this.time = newTime;
         this.cityId = newCityId;
-        this.temp = newTemp;
-        this.apparentTemp = newApparentTemp;
         this.weatherCode = newWeatherCode;
-        this.humidity = newHumidity;
-        this.winSpeed = newWinSpeed;
+        this.maxTemp = newMaxTemp;
+        this.minTemp = newMinTemp;
+        this.sunrise = newSunrise;
+        this.sunset = newSunset;
+        this.maxWindSpeed = newMaxWindSpeed; 
     }
 }

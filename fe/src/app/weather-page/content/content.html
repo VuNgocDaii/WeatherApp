@@ -1,0 +1,136 @@
+<div class="grid grid-nogutter h-full w-full">
+  
+  <div class="col-7 flex  flex-column ">
+    <div style="width: 100%;height: 4.5%;margin-top: 15px;">
+      <p-autoComplete  [(ngModel)]="draftCity"
+  [suggestions]="citySuggestions"
+  (completeMethod)="onSearchCity($event)"
+  (onSelect)="commitCity($event)"
+  (onClear)="clearCity()"
+  optionLabel="cityName"
+  [forceSelection]="true" 
+  [ngStyle]="{ margin: '0', height: '100%', width: '100%' }" 
+       
+        [inputStyle]="{
+          all: 'unset',
+          boxSizing: 'border-box',
+          width: '100%',
+          height: '100%',
+          padding: '0 18px',
+          borderRadius: '999px',
+          background: '#2a3646',
+          color: 'white',
+          caretColor: 'white'
+        }" placeholder="Search for cities">
+        <ng-template pTemplate="item" let-c>
+          <div style="display:flex;flex-direction:column;">
+            <div style="color:rgba(255,255,255,0.55);font-size:12px;">
+             {{c.cityName}} · {{c.country}} 
+            </div>
+          </div>
+        </ng-template>
+      </p-autoComplete>
+
+    </div>
+
+
+    @if (!loading()){
+    <div class="grid grid-nogutter" style="height: 30vh;">
+
+      <div class="col-7 flex-column" style="margin-left: 3rem;">
+        <h1 style="color: white;margin:0px;margin-top:2rem;">{{curCity.cityName}}</h1>
+        <h1 style="font-size: 70px;color: white;margin: 0px;">{{curDay.temp}}°C</h1>
+        <h3 style="color: gray;margin:0px;font-weight: 200;">{{weatherDescFromCode(curDay.weatherCode)}}       </h3>
+      </div>
+
+      <img class="col" [src]="'/assets/weather-icons/' + curDay.icon + '.svg'"
+        style=" height: 80%;" alt="weather" />
+
+    </div>
+    <div style="height: 28vh; background-color: #1f2b3a;border-radius: 28px;width: 100%;">
+      <h1 style="display: flex;color: gray;margin-left: 30px;margin-top: 20px;font-size: 15px;">AIR CONDITIONS</h1>
+      <div class="grid grid-nogutter">
+        <div class="col-6 flex flex-column">
+          <div style="display: flex;">
+            <h1 style="color: gray;font-size: 15px;margin-left: 30px;"> <i class="bi bi-thermometer-high"
+                style="font-size: 20px;"></i> Real Feel</h1>
+          </div>
+          <div style="display: flex;margin:0px;">
+            <h1 style="color: white;font-size: 30px;margin: 0px;margin-left: 55px;">{{curDay.apparentTemp}}°C</h1>
+          </div>
+          <div style="display: flex;">
+            <h1 style="color: gray;font-size: 15px;margin-left: 30px;"> <i class="bi bi-wind"
+                style="font-size: 20px;"></i> Wind Speed</h1>
+          </div>
+          <div style="display: flex;margin:0px;">
+            <h1 style="color: white;font-size: 30px;margin: 0px;margin-left: 55px;">{{curDay.windSpeed}} km/h</h1>
+          </div>
+        </div>
+
+        <div class="col-6 flex flex-column">
+          <div style="display: flex;">
+            <h1 style="color: gray;font-size: 15px;margin-left: 30px;"> <i class="bi bi-speedometer2"
+                style="font-size: 20px;"></i> Air Quality</h1>
+          </div>
+          <div style="display: flex;margin:0px;">
+            <h1 style="color: white;font-size: 30px;margin: 0px;margin-left: 55px;">{{aqi}}</h1>
+          </div>
+          <div style="display: flex;">
+            <h1 style="color: gray;font-size: 15px;margin-left: 30px;"> <i class="bi bi-droplet"
+                style="font-size: 20px;"></i> Humidity</h1>
+          </div>
+          <div style="display: flex;margin:0px;">
+            <h1 style="color: white;font-size: 30px;margin: 0px;margin-left: 55px;">{{curDay.humidity}}%</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height: 28vh; background-color: #1f2b3a;border-radius: 28px;width: 100%;margin-top: 25px;">
+      <h1 style="display: flex;color: gray;margin-left: 30px;margin-top: 20px;font-size: 15px;">TODAY'S FORECAST</h1>
+      <div class="today-scroll">
+        @for (f of forecastToday; track f.time) {
+        <div class="forecast-item">
+          <h1 class="t">{{ formatHour(f.time) }}</h1>
+
+          <img class="ico" [src]="'/assets/weather-icons/' + curDay.icon + '.svg'"
+            alt="icon" style="width: 80%;" />
+
+          <div class="temp">{{ f.temp }}°</div>
+        </div>
+        }
+      </div>
+
+    </div>
+
+  }
+  </div>
+  @if (!loading()){
+  <div class="col flex" style="justify-content: center;">
+    <div style="width: 90%;height: 88vh;background-color: #1f2b3a;margin-top:8vh;border-radius: 28px;">
+      <h1 style="display:flex;color:gray;margin-left:30px;margin-top:20px;font-size:15px;height: 2%;">7-DAY FORECAST
+      </h1>
+
+      <div class="forecast7" style="height: 90%;">
+        @for (f of forecast7Days; track f.date) {
+        <div class="forecast7-row">
+          <div class="forecast7-date">
+            {{f.date.getDate()}}/{{f.date.getMonth()+1}}/{{f.date.getFullYear()}}
+          </div>
+
+          <div class="forecast7-icon">
+            <img [src]="'/assets/weather-icons/' + curDay.icon + '.svg'"
+              alt="icon" />
+          </div>
+
+          <div class="forecast7-temp">
+            {{f.tempAvg}}°C
+          </div>
+        </div>
+        }
+      </div>
+    
+    </div>
+  </div>
+}
+</div>

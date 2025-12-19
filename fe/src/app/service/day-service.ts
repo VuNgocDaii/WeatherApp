@@ -1,31 +1,30 @@
 import { Injectable } from '@angular/core';
 import { Day } from '../model/day';
-const STORAGE_CITY = 'storage_city';
-const STORAGE_CITY_ID = 'storage_city_id';
-const STORAGE_DAY = 'storage_day';
+import { DayTree, treeItem } from '../utils/day-util';
+import { STORAGE_DAY } from '../share';
 @Injectable({
   providedIn: 'root',
 })
 export class DayService {
-  load(): Day[] {
-    const json = localStorage.getItem(STORAGE_DAY);
-        if (!json) return [];
-        try {
-          let days = JSON.parse(json) as Day[];
-          return days;
-        }
-        catch {
-          return [];
-        }
-  }
-  add(newTime: Date, newCityId: number, newTemp: number, newApparentTemp: number, 
-                newWeatherCode: number, newHumidity: number, newWinSpeed: number) {
-                  ////////
-    let newDay = new Day(newTime, newCityId, newTemp, newApparentTemp, newWeatherCode, newHumidity, newWinSpeed);
-    let days = this.load();
-    days.push(newDay);
-    localStorage.setItem(STORAGE_DAY,JSON.stringify(days));
+
+  saveTreeToLocal(tree: DayTree) {
+    const dump = tree.dump();
+    localStorage.setItem(STORAGE_DAY, JSON.stringify(dump));
   }
 
-  
+  loadTreeFromLocal(): DayTree {
+    const tree = new DayTree();
+    const json = localStorage.getItem(STORAGE_DAY);
+    if (!json) return tree;
+
+    try {
+      const dump = JSON.parse(json) as treeItem[];
+      if (Array.isArray(dump)) {
+        dump.sort((a, b) => a.key - b.key);
+        tree.loadFromDump(dump);
+      }
+    } catch { }
+    return tree;
+  }
+
 }

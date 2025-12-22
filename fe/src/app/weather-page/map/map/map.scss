@@ -1,0 +1,106 @@
+:host {
+  display: block;
+  height: 100vh;
+  width: 100%;
+  color: white;
+
+}
+
+#map {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+}
+
+.panel {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 14px;
+  border-radius: 10px;
+  max-width: 260px;
+  backdrop-filter: blur(8px);
+}
+
+h3 {
+  margin-top: 0;
+  font-size: 16px;
+}
+
+.layer-buttons button {
+  display: inline-block;
+  margin: 3px 4px;
+  background: #222;
+  color: white;
+  border: 1px solid #444;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 13px;
+}
+
+.layer-buttons button.active {
+  background: #0078ff;
+  border-color: #0078ff;
+}
+
+.search {
+  display: flex;
+  margin-top: 8px;
+}
+
+.search input {
+  flex: 1;
+  border: none;
+  border-radius: 6px 0 0 6px;
+  padding: 6px;
+  outline: none;
+}
+
+.search button {
+  background: #0078ff;
+  color: white;
+  border: none;
+  border-radius: 0 6px 6px 0;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.slider {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.legend {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  backdrop-filter: blur(8px);
+}
+
+.legend-bar {
+  height: 8px;
+  width: 220px;
+  background: linear-gradient(
+    to right,
+    #2c7bb6,
+    #abd9e9,
+    #ffffbf,
+    #fdae61,
+    #d7191c
+  );
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+.popup {
+  color: black;
+  font-size: 14px;
+}

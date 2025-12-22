@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { City } from '../model/city';
 import { stringify } from 'querystring';
 import { HourService } from './hour-service';
-import { STORAGE_CITY,STORAGE_CITY_ID,STORAGE_CURTIME,API_KEY } from '../share'; 
+import { STORAGE_CITY,STORAGE_CITY_ID,STORAGE_CURTIME,API_KEY } from '../share/constants/constans';
 
 
 @Injectable({
@@ -61,7 +61,7 @@ export class CityService {
       let res = await fetch(urlAddCity);
       let data = await res.json();
       
-      newCityName = data[0]?.name;
+      newCityName = data[0]?.local_names.vi;
       newCountry = data[0]?.country;
 
       let curDay = this.loadCurDay()[0];
@@ -95,26 +95,33 @@ export class CityService {
 
     if (!checkExist) {
       console.log('new city :' + newCityName);
-      let newCityId = this.genNewId();
+
+      newCityId = this.genNewId();
     let newCity = new City(newCityId, newCityName, newLat, newLon, newCountry, typeFavour);
       cities.push(newCity);
+
       localStorage.setItem(STORAGE_CITY, JSON.stringify(cities));
       let urlDay = 'https://api.open-meteo.com/v1/forecast?latitude='+newLat+'&longitude='+newLon+'&hourly=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,apparent_temperature&timezone=Asia%2FBangkok' ;
       let resDay = await fetch(urlDay);
       let dayData = await resDay.json();
+
       console.log(dayData);
       for (let i=0;i<dayData.hourly.time.length;i++) {
         let data = dayData.hourly;
         this.hourService.add(data.time[i],newCityId,data.temperature_2m[i],data.apparent_temperature[i],
                             data.weather_code[i],data.relative_humidity_2m[i],data.wind_speed_10m[i]);
 
-        console.log(i,data.time[i],newCityId,data.temperature_2m[i],data.apparent_temperature[i],
-                            data.weather_code[i],data.relative_humidity_2m[i],data.wind_speed_10m[i]);
+       // console.log(i,data.time[i],newCityId,data.temperature_2m[i],data.apparent_temperature[i],
+         //                   data.weather_code[i],data.relative_humidity_2m[i],data.wind_speed_10m[i]);
       }
     } else {
       console.log('city existed :' + newCityName)
-      
+      let data = this.load();
+      for (let c of data)
+      if (c.cityName === newCityName && c.country === newCountry) newCityId=c.cityId;
     }
+    let data = this.load();
+    console.log(data);console.log('CurID  ',newCityId);
     return newCityId;
   }
 

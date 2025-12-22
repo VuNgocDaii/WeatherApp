@@ -35,6 +35,7 @@
     "@primeng/themes": "^21.0.2",
     "@primeuix/themes": "^2.0.2",
     "express": "^5.1.0",
+    "maplibre-gl": "^5.15.0",
     "primeflex": "^4.0.0",
     "primeicons": "^7.0.0",
     "primeng": "^21.0.2",

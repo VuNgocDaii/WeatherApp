@@ -7,6 +7,7 @@ export class Hour {
     humidity: number;
     windSpeed: number;
     icon: string;
+    isDay?: boolean;
     constructor(newTime: Date, newCityId: number, newTemp: number, newApparentTemp: number, 
                         newWeatherCode: number, newHumidity: number, newWinSpeed: number,newIcon: string) {
         ////

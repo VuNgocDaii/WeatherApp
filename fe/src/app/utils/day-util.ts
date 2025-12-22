@@ -1,25 +1,27 @@
 import { Injectable } from '@angular/core';
 import { Day } from '../model/day';
+////
 export type DayDTO = {
   time: string;
   cityId: number;
   weatherCode: number;
   maxTemp: number;
   minTemp: number;
-  sunrise: string;
-  sunset: string;
+  sunrise: Date;
+  sunset: Date;
   maxWindSpeed: number;
+  icon:string;
 };
 
-
+////
 export type treeItem = {
   key: number;
   days: DayDTO[];
 }
-
+////
 type Tree = treeItem[];
 type CityMap = Map<number, Day>;
-
+///
 class Node {
   key: number;
   value: CityMap;
@@ -32,6 +34,7 @@ class Node {
     this.value = value ?? new Map<number, Day>();
   }
 }
+///
 function toDTO(d: Day): DayDTO {
     return {
       time: d.time.toISOString(),
@@ -39,9 +42,10 @@ function toDTO(d: Day): DayDTO {
       weatherCode: d.weatherCode,
       maxTemp: d.maxTemp,
       minTemp: d.minTemp,
-      sunrise: d.sunrise.toISOString(),
-      sunset: d.sunset.toISOString(),
+      sunrise: d.sunrise,
+      sunset: d.sunset,
       maxWindSpeed: d.maxWindSpeed,
+      icon: d.icon
     };
   }
 
@@ -54,9 +58,11 @@ function fromDTO(x: DayDTO): Day {
       x.minTemp,
       new Date(x.sunrise),
       new Date(x.sunset),
-      x.maxWindSpeed
+      x.maxWindSpeed,
+      x.icon
     );
   }
+///
 
 function normalizeDay(d: Date): Date {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
@@ -71,7 +77,7 @@ function dateInt(d: Date): number {
 function h(n: Node | null) { return n ? n.height : 0; }
 function update(n: Node) { n.height = Math.max(h(n.left), h(n.right)) + 1; }
 function bf(n: Node) { return h(n.left) - h(n.right); }
-
+///
 function rotateRight(y: Node): Node {
   const x = y.left!;
   const t2 = x.right;
@@ -95,7 +101,7 @@ function rotateLeft(x: Node): Node {
   update(y);
   return y;
 }
-
+///
 function rebalance(n: Node): Node {
   update(n);
   const b = bf(n);
@@ -166,12 +172,12 @@ export class DayTree {
     const a = dateInt(normalizeDay(from));
     const b = dateInt(normalizeDay(to));
     const out: Day[] = [];
-
+    
     this._range(this.root, a, b, (node) => {
       const d = node.value.get(cityId);
       if (d) out.push(d);
     });
-
+   // console.log(out);
     return out;
   }
 
@@ -186,6 +192,7 @@ export class DayTree {
 
   private _range(node: Node | null, a: number, b: number, visit: (n: Node) => void) {
     if (!node) return;
+    // console.log(node.key, node.value);
     if (a < node.key) this._range(node.left, a, b, visit);
     if (a <= node.key && node.key <= b) visit(node);
     if (node.key < b) this._range(node.right, a, b, visit);
@@ -248,17 +255,11 @@ export class DayTree {
   return new Date(y, m - 1, d, 0, 0, 0, 0);
 }
 
-  getMaxDate(): Date | null {
+  getMaxDate(): Date {
+    const now = new Date();
+    const infi = new Date(now.getFullYear(), now.getMonth()+1, now.getDate(), 0, 0, 0, 0);
     const k = this.getMaxKey();
-    if (k == null) return null;
+    if (k == null) return infi;
     return this.keyToLocalDate(k);
   }
-}
-@Injectable({
-  providedIn: 'root',
-})
-
-export class DayUtil {
-  
-
 }

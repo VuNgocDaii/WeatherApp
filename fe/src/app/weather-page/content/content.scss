@@ -92,5 +92,32 @@
     font-size: 22px;
     font-weight: 600;
   }
-
-  
+  .hub-container {
+    display: flex;
+    height: 5%;
+    width: 95%;
+    gap:5px;
+  }
+  .locate-btn{
+      height: 100%;
+      padding: 0 20px;
+      border-radius: 999px;
+      border: 0;
+      background: #1f2b3a;
+      color: white;
+      cursor: pointer;
+      white-space: nowrap;
+  }
+  .temp-btn{
+      height: 100%;
+      padding: 0 20px;
+      border-radius: 999px;
+      border: 0;
+      background: #1f2b3a;
+      color: white;
+      cursor: pointer;
+      white-space: nowrap;
+  }
+  .week-forecast-panel {
+    width: 95%;height: 88vh;background-color: #1f2b3a;margin-top:1vh;border-radius: 28px;
+  }

@@ -1,4 +1,4 @@
-import { Component, ApplicationRef, effect } from '@angular/core';
+import { Component, ApplicationRef, effect, Output, EventEmitter } from '@angular/core';
 import { CityService } from '../../service/city-service';
 import { HourService } from '../../service/hour-service';
 import { signal } from '@angular/core';
@@ -6,144 +6,20 @@ import { CommonModule, isPlatformBrowser, NgIf } from '@angular/common';
 import { Hour } from '../../model/hour';
 import { City } from '../../model/city';
 import { AutoCompleteModule } from 'primeng/autocomplete';
-
+import { Day } from '../../model/day';
+import { DayTree } from '../../utils/day-util';
+import { DayService } from '../../service/day-service';
+import { STORAGE_CITY } from '../../share/constants/constans';
+import { WMO_ICON_MAP,WMO_WW_EN } from '../../share/constants/constans';
 const STORAGE_CURDAY = 'storage_curday';
 const STORAGE_CURTIME = 'storage_curtime';
 const API_KEY = '8dbd93011c9639f3899f8bcdb229f5e9';
 
 import { Inject, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { url } from 'inspector';
 
 
-const WMO_WW_EN: Record<number, string> = {
-  0: "Cloud development not observed / not available",
-  1: "Clouds dissolving or becoming less developed",
-  2: "Sky state overall unchanged",
-  3: "Clouds forming or developing",
 
-  4: "Visibility reduced by smoke (fires/industrial/volcanic ash)",
-  5: "Haze",
-  6: "Widespread dust in suspension (not raised by wind at station)",
-  7: "Dust/sand raised by wind at/near station (no dust whirls; no storm)",
-  8: "Dust/sand whirls seen at/near station (no duststorm/sandstorm)",
-  9: "Duststorm or sandstorm in sight (or occurred at station in past hour)",
-
-  10: "Mist",
-  11: "Shallow fog/ice fog in patches at station",
-  12: "Shallow fog/ice fog more or less continuous at station",
-  13: "Lightning visible (no thunder heard)",
-  14: "Precipitation visible but not reaching the ground/sea (virga)",
-  15: "Precipitation visible, reaching ground/sea, distant (>5 km)",
-  16: "Precipitation visible, reaching ground/sea, nearby (not at station)",
-  17: "Thunderstorm (no precipitation at time of observation)",
-  18: "Squalls at/within sight of station",
-  19: "Funnel cloud (tornado/waterspout) at/within sight of station",
-
-  // 20–29: happened during the preceding hour, not at observation time
-  20: "Drizzle (non-freezing) or snow grains occurred (not showers)",
-  21: "Rain (non-freezing) occurred (not showers)",
-  22: "Snow occurred (not showers)",
-  23: "Rain & snow or ice pellets occurred (not showers)",
-  24: "Freezing drizzle or freezing rain occurred (not showers)",
-  25: "Rain showers occurred",
-  26: "Snow showers or mixed rain/snow showers occurred",
-  27: "Hail showers (or rain + hail) occurred",
-  28: "Fog or ice fog occurred",
-  29: "Thunderstorm occurred (with or without precipitation)",
-
-  // 30–39: dust/sandstorm or blowing/drifting snow
-  30: "Light/moderate duststorm or sandstorm decreasing",
-  31: "Light/moderate duststorm or sandstorm no change",
-  32: "Light/moderate duststorm or sandstorm starting/increasing",
-  33: "Severe duststorm or sandstorm decreasing",
-  34: "Severe duststorm or sandstorm no change",
-  35: "Severe duststorm or sandstorm starting/increasing",
-  36: "Light/moderate blowing snow (generally low, below eye level)",
-  37: "Heavy drifting/blowing snow (generally low, below eye level)",
-  38: "Light/moderate blowing snow (generally high, above eye level)",
-  39: "Heavy drifting/blowing snow (generally high, above eye level)",
-
-  // 40–49: fog/ice fog at observation time
-  40: "Fog/ice fog at a distance (not at station in preceding hour)",
-  41: "Fog/ice fog in patches at station",
-  42: "Fog/ice fog thinning (sky visible)",
-  43: "Fog/ice fog thinning (sky not visible)",
-  44: "Fog/ice fog no change (sky visible)",
-  45: "Fog/ice fog no change (sky not visible)",
-  46: "Fog/ice fog forming or thickening (sky visible)",
-  47: "Fog/ice fog forming or thickening (sky not visible)",
-  48: "Rime-depositing fog (sky visible)",
-  49: "Rime-depositing fog (sky not visible)",
-
-  // 50–59: drizzle
-  50: "Light drizzle, intermittent (non-freezing)",
-  51: "Light drizzle, continuous (non-freezing)",
-  52: "Moderate drizzle, intermittent (non-freezing)",
-  53: "Moderate drizzle, continuous (non-freezing)",
-  54: "Heavy drizzle, intermittent (non-freezing)",
-  55: "Heavy drizzle, continuous (non-freezing)",
-  56: "Light freezing drizzle",
-  57: "Moderate/heavy freezing drizzle",
-  58: "Light drizzle and rain",
-  59: "Moderate/heavy drizzle and rain",
-
-  // 60–69: rain
-  60: "Light rain, intermittent (non-freezing)",
-  61: "Light rain, continuous (non-freezing)",
-  62: "Moderate rain, intermittent (non-freezing)",
-  63: "Moderate rain, continuous (non-freezing)",
-  64: "Heavy rain, intermittent (non-freezing)",
-  65: "Heavy rain, continuous (non-freezing)",
-  66: "Light freezing rain",
-  67: "Moderate/heavy freezing rain",
-  68: "Light rain/drizzle with snow",
-  69: "Moderate/heavy rain/drizzle with snow",
-
-  // 70–79: solid precipitation (not showers)
-  70: "Light snow, intermittent",
-  71: "Light snow, continuous",
-  72: "Moderate snow, intermittent",
-  73: "Moderate snow, continuous",
-  74: "Heavy snow, intermittent",
-  75: "Heavy snow, continuous",
-  76: "Ice prisms / diamond dust (with or without fog)",
-  77: "Snow grains (with or without fog)",
-  78: "Isolated star-like snow crystals (with or without fog)",
-  79: "Ice pellets (not showers)",
-
-  // 80–99: showers and/or thunderstorm related
-  80: "Light rain showers",
-  81: "Moderate/heavy rain showers",
-  82: "Violent rain showers",
-  83: "Light mixed rain & snow showers",
-  84: "Moderate/heavy mixed rain & snow showers",
-  85: "Light snow showers",
-  86: "Moderate/heavy snow showers",
-  87: "Light showers of snow pellets / small hail (with/without rain)",
-  88: "Moderate/heavy showers of snow pellets / small hail (with/without rain)",
-  89: "Light hail showers (no thunder)",
-  90: "Moderate/heavy hail showers (no thunder)",
-
-  // 91–94: thunderstorm in preceding hour, not at observation time
-  91: "Slight rain now; thunderstorm in preceding hour (not now)",
-  92: "Moderate/heavy rain now; thunderstorm in preceding hour (not now)",
-  93: "Slight snow/mixed/hail now; thunderstorm in preceding hour (not now)",
-  94: "Moderate/heavy snow/mixed/hail now; thunderstorm in preceding hour (not now)",
-
-  // 95–99: thunderstorm at observation time
-  95: "Thunderstorm (slight/moderate), no hail; with rain/snow",
-  96: "Thunderstorm (slight/moderate) with hail",
-  97: "Thunderstorm (heavy), no hail; with rain/snow",
-  98: "Thunderstorm with duststorm/sandstorm",
-  99: "Thunderstorm (heavy) with hail",
-};
-
-type ForecastDay = {
-  date: Date;
-  tempAvg: number;
-  weatherCodeAvg: number;
-};
 type CityDTO = {
   cityName: string;
   lat: number;
@@ -158,33 +34,35 @@ type CityDTO = {
   imports: [CommonModule, AutoCompleteModule, FormsModule],
 })
 export class Content {
-  
 
-  loading = signal(true);
-  constructor(private cityService: CityService, private hourService: HourService, private ar: ApplicationRef,
+  @Output() weatherChange = new EventEmitter<Hour>();
+  loading = signal(true);time = 0;
+  constructor(private cityService: CityService, private hourService: HourService, private ar: ApplicationRef, private dayService: DayService,
     @Inject(PLATFORM_ID) private platformId: Object) {
-    let time = 0;
+    
     effect(() => {
-      time++;
+      this.time++;
       const isLoading = this.loading();
       console.log('loading changed ->', isLoading);
 
-      if (isLoading && time > 1) {
+      if (isLoading && this.time > 1) {
         this.loadCurCityPage(false);
-        console.log(this.curCity.name + ' load');
+        console.log(this.curCity.cityName + ' load');
       }
     });
-
   }
+
+  sunsetTime: Date = new Date();
+  sunriseTime: Date = new Date();
   lon: any = 0;
   lat: any = 0;
   curCity: any = '';
-  curDay = new Hour(new Date(),0,0,0,0,0,0,'');
+  curDay = new Hour(new Date(), 0, 0, 0, 0, 0, 0, '');
 
   check: number = 0;
   aqi: string = '';
   forecastToday: Hour[] = [];
-  forecast7Days: ForecastDay[] = [];
+  forecast7Days: Day[] = [];
   selectedCity: CityDTO = {
     cityName: '',
     lat: 0,
@@ -221,7 +99,8 @@ export class Content {
       }
 
       const data = (await res.json()) as any[];
-
+      console.log('***', data);
+      console.log(res);
       this.citySuggestions = (data ?? []).map(x => ({
         cityName: x.name,
         lat: x.lat,
@@ -264,9 +143,16 @@ export class Content {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
+    let checkCityExisted: boolean = false;
+    let dataLocateCity = this.cityService.load();
+
+
     console.log(this.loading);
+
     await this.getUserLocation(mode);
-    console.log(this.lat + ' ' + this.lon + ' ' + this.curCity + ' ' + this.aqi);
+
+    console.log(this.curCity.lat + ' ' + this.curCity.lon + ' ' + this.curCity.cityName + ' ' + this.aqi);
+    for (let d of dataLocateCity) if (d.cityId === this.curCity.cityId) checkCityExisted = true;
     console.log(this.curDay);
     console.log(this.loading);
 
@@ -283,38 +169,44 @@ export class Content {
     //         let dataDay = this.dayService.load();
     //     for (let d of dataDay) {console.log(count,d.time,d.apparentTemp);count+=1;}
 
+    console.log('////////');
+    const now = new Date();
+    const from = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+    const to = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 6, 0, 0, 0, 0);
 
-    const start = new Date();
-    start.setHours(0, 0, 0, 0);
+    let tree = this.dayService.loadTreeFromLocal();
+    console.log('Log from tree ' + this.curCity.cityId, to, tree.getMaxDate());
 
-    for (let i = 0; i < 7; i++) {
-      const da = new Date(start);
-      da.setDate(start.getDate() + i);
+    console.log(tree.rangeByCity(this.curCity.cityId, from, to));
 
-      const forecastInDay = this.hourService.load()
-        .filter(d => d.cityId === this.curCity.cityId && this.cityService.compareDay(d.time, da));
+    console.log('City exist for add info: ' + checkCityExisted);
+    if (to < tree.getMaxDate() || checkCityExisted === false) {
+      console.log('load 7 day new' + to);
+      let jsonC = localStorage.getItem(STORAGE_CITY);
+      if (jsonC) {
+        const dataCity = JSON.parse(jsonC) as City[];
+        for (let c of dataCity) {
+          tree = await this.addDataDayOfCity(tree, c.lat, c.lon, c.cityId);
 
-      if (forecastInDay.length === 0) {
-        this.forecast7Days.push({ date: da, tempAvg: NaN, weatherCodeAvg: NaN });
-        continue;
+        }
       }
-
-      let sumTemp = 0;
-      let sumCode = 0;
-
-      for (const f of forecastInDay) {
-        sumTemp += Number(f.temp ?? 0);
-        sumCode += Number(f.weatherCode ?? 0);
-      }
-
-      const tempAvg = Math.round(sumTemp / forecastInDay.length);
-      const weatherCodeAvg = Math.round(sumCode / forecastInDay.length);
-
-      this.forecast7Days.push({ date: da, tempAvg, weatherCodeAvg });
-
-      console.log(i, da, weatherCodeAvg, tempAvg);
+      this.dayService.saveTreeToLocal(tree);
     }
 
+    const foreCastPerDay = tree.rangeByCity(this.curCity.cityId, from, to);
+    // console.log(foreCastPerDay);
+    this.sunsetTime = foreCastPerDay[0].sunset;
+    this.sunriseTime = foreCastPerDay[0].sunrise;
+    for (let f of foreCastPerDay) {
+      // let forecastDay = forecastPerDay[i];
+      // console.log('ngu ' + f.time);
+
+
+      this.forecast7Days.push(f);
+      // console.log(forecastDay);
+    }
+
+    this.loading.set(false);
     console.log(this.forecast7Days);
   }
 
@@ -325,10 +217,17 @@ export class Content {
   async getUserLocation(mode: boolean): Promise<void> {
     return new Promise((resolve, rejects) => {
       navigator.geolocation.getCurrentPosition(async position => {
+
         if (mode) {
           this.lat = position.coords.latitude;
           this.lon = position.coords.longitude;
+          console.log('123   ', this.lat, this.lon);
+        } else {
+          this.lat = this.selectedCity.lat;
+          this.lon = this.selectedCity.lon;
+          console.log('1234   ', this.lat, this.lon);
         }
+
         const [curCity, curDay, aqi] = await Promise.all([
           this.cityService.loadCityInfo(await this.cityService.add('none', this.lat, this.lon, false)),
           this.hourService.checkWeatherNow(this.lat, this.lon),
@@ -336,11 +235,13 @@ export class Content {
         ]);
 
         this.curCity = curCity;
+        console.log('new city fecth ' + curCity.cityName);
         this.curDay = curDay;
+        this.weatherChange.emit(this.curDay);
         this.aqi = aqi;
 
 
-        this.loading.set(false);
+
         resolve();
       })
     });
@@ -348,7 +249,6 @@ export class Content {
   }
 
   weatherDescFromCode(code: number | null | undefined) {
-    // console.log('call1');
     if (code == null) return "";
     return WMO_WW_EN[code] ?? "Unknown weather code";
   }
@@ -379,5 +279,59 @@ export class Content {
     return new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' }).format(d);
   }
 
+  async addDataDayOfCity(tree: DayTree, lat: number, lon: number, cityId: number): Promise<DayTree> {
+    let url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + '&daily=sunrise,sunset,weather_code,temperature_2m_max,temperature_2m_min,wind_speed_10m_max&timezone=Asia%2FBangkok&forecast_days=14';
+    let res = await fetch(url);
+    let data = await res.json()
+    for (let i = 0; i < 7; i++) {
+      let s = data.daily.time[i];
+      const [y, m, d] = s.split('-').map(Number);
+      let date: Date = new Date(y, m - 1, d, 0, 0, 0, 0);
+      let day = new Day(date, cityId, data.daily.weather_code[i],
+        data.daily.temperature_2m_max[i], data.daily.temperature_2m_min[i],
+        data.daily.sunrise[i], data.daily.sunset[i], data.daily.wind_speed_10m_max[i],
+        this.getWmoIcon(data.daily.weather_code[i], true));
+
+      day.icon = this.getWmoIcon(day.weatherCode, true);
+      console.log(day);
+      tree.upsert(day);
+
+    }
+    return tree;
+  }
+  isDayTime(time: any): boolean {
+    const d = this.toDate(time);
+    if (!d) return true;
+    const h = d.getHours();
+    return h >= 6 && h < 18;
+  }
+  getWmoIcon(code: number, isDay: boolean): string {
+    const def = WMO_ICON_MAP[code] ?? 'not-available';
+    return typeof def === 'string' ? def : (isDay ? def.day : def.night);
+  }
+
+ 
+  tempUnit: 'C' | 'F' = 'C';
+
+  toggleTempUnit() {
+    this.tempUnit = this.tempUnit === 'C' ? 'F' : 'C';
+  }
+
+  toDisplayTemp(celsius: number): number {
+    if (celsius == null || !Number.isFinite(celsius)) return 0;
+    return this.tempUnit === 'C'
+      ? Math.round(celsius)
+      : Math.round((celsius * 9) / 5 + 32);
+  }
+
+  tempSuffix(): string {
+    return '°'+this.tempUnit;
+  }
+  toggleLocate() {
+    this.time = 0;
+    this.draftCity='';
+    this.loading.set(true);
+    this.loadCurCityPage(true);
+  }
 
 }

@@ -7,7 +7,8 @@ export class Day {
     sunrise: Date;
     sunset: Date;
     maxWindSpeed: number;
-    constructor(newTime:Date, newCityId:number, newWeatherCode:number, newMaxTemp: number, newMinTemp:number, newSunrise: Date, newSunset: Date, newMaxWindSpeed:number) {
+    icon: string;
+    constructor(newTime:Date, newCityId:number, newWeatherCode:number, newMaxTemp: number, newMinTemp:number, newSunrise: Date, newSunset: Date, newMaxWindSpeed:number,newIcon: string) {
         this.time = newTime;
         this.cityId = newCityId;
         this.weatherCode = newWeatherCode;
@@ -16,5 +17,6 @@ export class Day {
         this.sunrise = newSunrise;
         this.sunset = newSunset;
         this.maxWindSpeed = newMaxWindSpeed; 
+        this.icon = newIcon;
     }
 }

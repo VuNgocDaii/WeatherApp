@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CityService } from '../../../service/city-service';
-import {  isPlatformBrowser, NgIf } from '@angular/common';
+import { CityService } from '../../service/city-service';
+import { isPlatformBrowser, NgIf } from '@angular/common';
 import { Inject, PLATFORM_ID } from '@angular/core';
 type WeatherLayer = { id: string; label: string; tile: string };
 
@@ -15,7 +15,7 @@ type WeatherLayer = { id: string; label: string; tile: string };
 export class Map implements AfterViewInit, OnDestroy {
   MAPTILER_KEY = 'RbAmeLkSfcHaD8uF3xLs';
   OPEN_WEATHER_KEY = '8dbd93011c9639f3899f8bcdb229f5e9';
-  constructor (private cityService:CityService, @Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(private cityService: CityService, @Inject(PLATFORM_ID) private platformId: Object) { }
   opacity = 0.6;
   city = '';
 
@@ -73,21 +73,21 @@ export class Map implements AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     try {
       this.map?.remove?.();
-    } catch {}
+    } catch { }
   }
 
-  lat:number = 0;
-  lon:number = 0;
+  lat: number = 0;
+  lon: number = 0;
   async getUserLocation(): Promise<string> {
-      let res: string = '';
-      navigator.geolocation.getCurrentPosition(async position => {
-          this.lat = position.coords.latitude;
-          this.lon = position.coords.longitude;
-          const curCity = await this.cityService.loadCityInfo(await this.cityService.add('none', this.lat, this.lon, false));
-          console.log(curCity.cityName);
-          res = curCity.cityName;
-        return res;
-        
+    let res: string = '';
+    navigator.geolocation.getCurrentPosition(async position => {
+      this.lat = position.coords.latitude;
+      this.lon = position.coords.longitude;
+      const curCity = await this.cityService.loadCityInfo(await this.cityService.add('none', this.lat, this.lon, false));
+      console.log(curCity.cityName);
+      res = curCity.cityName;
+      return res;
+
     });
     return res;
   }
@@ -170,7 +170,6 @@ export class Map implements AfterViewInit, OnDestroy {
         layout: { visibility: visible ? 'visible' : 'none' },
       });
     } else {
-      // đã có layer rồi thì chỉ set visibility + opacity
       this.map.setLayoutProperty(id, 'visibility', visible ? 'visible' : 'none');
       this.map.setPaintProperty(id, 'raster-opacity', this.opacity);
     }

@@ -1,0 +1,143 @@
+<div class="grid grid-nogutter h-full w-full">
+
+  <div class="col-7 flex  flex-column ">
+    <div style="width: 100%;height: 4.5%;margin-top: 15px;">
+      <p-autoComplete [(ngModel)]="draftCity" [suggestions]="citySuggestions" (completeMethod)="onSearchCity($event)"
+        (onSelect)="commitCity($event)" (onClear)="clearCity()" optionLabel="cityName" [forceSelection]="true"
+        styleClass="city-ac" inputStyleClass="city-ac-input" placeholder="Search for cities">
+        <ng-template pTemplate="item" let-c>
+          <div class="city-ac-item">
+            <div class="city-ac-meta">{{ c.cityName }} · {{ c.country }}</div>
+          </div>
+        </ng-template>
+      </p-autoComplete>
+
+
+    </div>
+
+
+    @if (!loading()){
+    <div class="grid grid-nogutter city-info-container">
+      <div class="col-7 flex-column city-info-status">
+        <h1 class="city-info-name">{{curCity.cityName}}</h1>
+
+        <h1 class="city-info-deegre"> {{curDay.temp | deegre : tempUnit()}}°{{tempUnit()}}</h1>
+
+        <h3 class="city-info-description">{{curWeatherDescription}} </h3>
+      </div>
+
+      <img class="col" [src]="'/assets/weather-icons/' + curDay.icon + '.svg'" class="city-info-img" alt="weather" />
+
+    </div>
+
+    <div class="detail-info-container">
+      <h1 class="detail-info-title">AIR CONDITIONS</h1>
+      <div class="grid grid-nogutter">
+        <div class="col-4 flex flex-column">
+
+          <div class="info-container">
+            <h1 class="info-title"> <i class="bi bi-thermometer-high"></i> Real Feel</h1>
+          </div>
+          <div class="info-container">
+            <h1 class="info-detail">
+              {{curDay.apparentTemp | deegre : tempUnit()}}° {{tempUnit()}}</h1>
+          </div>
+          <div class="info-container">
+            <h1 class="info-title"> <i class="bi bi-wind"></i> Wind Speed</h1>
+          </div>
+          <div class="info-container">
+            <h1 class="info-detail">{{curDay.windSpeed}} km/h</h1>
+          </div>
+        </div>
+
+        <div class="col-4 flex flex-column">
+          <div class="info-container">
+            <h1 class="info-title"> <i class="bi bi-speedometer2"></i> Air Quality</h1>
+          </div>
+          <div class="info-container">
+            <h1 class="info-detail">{{aqi}}</h1>
+          </div>
+          <div class="info-container">
+            <h1 class="info-title"> <i class="bi bi-droplet"></i> Humidity</h1>
+          </div>
+          <div class="info-container">
+            <h1 class="info-detail">{{curDay.humidity}}%</h1>
+          </div>
+        </div>
+
+        <div class="col-4 flex flex-column">
+          <div class="info-container">
+            <h1 class="info-title"> <i class="bi bi-sunrise"></i> Sunrise</h1>
+          </div>
+          <div class="info-container">
+            <h1 class="info-detail">{{sunriseTime | date:'HH:mm'}}</h1>
+          </div>
+          <div class="info-container">
+            <h1 class="info-title"> <i class="bi bi-sunset"></i> Sunset</h1>
+          </div>
+          <div class="info-container">
+            <h1 class="info-detail">{{sunsetTime | date:'HH:mm'}}</h1>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="hour-forecast-container">
+      <h1 class="hour-forecast-title">TODAY'S FORECAST</h1>
+      <div class="today-scroll">
+        @for (f of forecastToday; track f.time) {
+        <div class="forecast-item">
+          <h1 class="t">{{ formatHour(f.time) }}</h1>
+
+          <img class="ico" [src]="'/assets/weather-icons/' + f.icon + '.svg'" alt="icon" style="width: 80%;" />
+          <div class="temp"> {{f.temp | deegre : tempUnit()}}°{{tempUnit()}}</div>
+        </div>
+        }
+      </div>
+
+    </div>
+
+    }
+  </div>
+  @if (!loading()){
+
+  <div class="col flex flex-column hub-button-container">
+    <div class="hub-container">
+      <button type="button" (click)="toggleLocate()" class="locate-btn">
+        <i class="bi bi-geo-alt-fill"></i>
+      </button>
+      <button type="button" (click)="toggleTempUnit()" class="temp-btn">
+        °{{ tempUnit() === 'C' ? 'F' : 'C' }}
+
+      </button>
+
+
+    </div>
+    <div class="week-forecast-panel">
+      <h1 class="week-forecast-title">7-DAY FORECAST
+      </h1>
+
+      <div class="forecast7" style="height: 90%;">
+        @for (f of forecast7Days; track f.time) {
+        <div class="forecast7-row">
+          <div class="forecast7-date">
+            {{f.time.getDate()}}/{{f.time.getMonth()+1}}/{{f.time.getFullYear()}}
+          </div>
+
+          <div class="forecast7-icon">
+            <img [src]="'/assets/weather-icons/' + f.icon + '.svg'" alt="icon" />
+          </div>
+
+          <div class="forecast7-temp">
+            {{ f.maxTemp | deegre : tempUnit()}}°{{tempUnit()}}
+          </div>
+
+        </div>
+        }
+      </div>
+
+    </div>
+  </div>
+  }
+</div>

@@ -11,6 +11,8 @@ import { DayTree } from '../../utils/day-util';
 import { DayService } from '../../service/day-service';
 import { STORAGE_CITY } from '../../share/constants/constans';
 import { WMO_ICON_MAP,WMO_WW_EN } from '../../share/constants/constans';
+import { DeegrePipe } from '../../share/pipe/deegrePipe';
+
 const STORAGE_CURDAY = 'storage_curday';
 const STORAGE_CURTIME = 'storage_curtime';
 const API_KEY = '8dbd93011c9639f3899f8bcdb229f5e9';
@@ -31,7 +33,7 @@ type CityDTO = {
 
   templateUrl: './content.html',
   styleUrl: './content.scss',
-  imports: [CommonModule, AutoCompleteModule, FormsModule],
+  imports: [CommonModule, AutoCompleteModule, FormsModule, DeegrePipe],
 })
 export class Content {
 
@@ -58,7 +60,7 @@ export class Content {
   lat: any = 0;
   curCity: any = '';
   curDay = new Hour(new Date(), 0, 0, 0, 0, 0, 0, '');
-
+  curWeatherDescription: string='';
   check: number = 0;
   aqi: string = '';
   forecastToday: Hour[] = [];
@@ -145,30 +147,21 @@ export class Content {
     }
     let checkCityExisted: boolean = false;
     let dataLocateCity = this.cityService.load();
-
-
     console.log(this.loading);
-
     await this.getUserLocation(mode);
-
     console.log(this.curCity.lat + ' ' + this.curCity.lon + ' ' + this.curCity.cityName + ' ' + this.aqi);
     for (let d of dataLocateCity) if (d.cityId === this.curCity.cityId) checkCityExisted = true;
+    this.curWeatherDescription = this.weatherDescFromCode(this.curDay.weatherCode);
     console.log(this.curDay);
     console.log(this.loading);
 
 
-    //  this.forecastToday = this.dayService.load().filter(d=>d.cityId === this.curCity.cityId && this.cityService.compareDay(d.time,new Date()));
-    //  for (let f of this.forecastToday) console.log(f);
 
     const all = this.hourService.load()
       .filter(d => d.cityId === this.curCity.cityId && this.cityService.compareDay(d.time, new Date()))
       .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
 
     this.forecastToday = all?.slice(0, 24);
-    // let count:number = 0;
-    //         let dataDay = this.dayService.load();
-    //     for (let d of dataDay) {console.log(count,d.time,d.apparentTemp);count+=1;}
-
     console.log('////////');
     const now = new Date();
     const from = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
@@ -187,7 +180,6 @@ export class Content {
         const dataCity = JSON.parse(jsonC) as City[];
         for (let c of dataCity) {
           tree = await this.addDataDayOfCity(tree, c.lat, c.lon, c.cityId);
-
         }
       }
       this.dayService.saveTreeToLocal(tree);
@@ -197,15 +189,7 @@ export class Content {
     // console.log(foreCastPerDay);
     this.sunsetTime = foreCastPerDay[0].sunset;
     this.sunriseTime = foreCastPerDay[0].sunrise;
-    for (let f of foreCastPerDay) {
-      // let forecastDay = forecastPerDay[i];
-      // console.log('ngu ' + f.time);
-
-
-      this.forecast7Days.push(f);
-      // console.log(forecastDay);
-    }
-
+    for (let f of foreCastPerDay) this.forecast7Days.push(f);
     this.loading.set(false);
     console.log(this.forecast7Days);
   }
@@ -221,11 +205,11 @@ export class Content {
         if (mode) {
           this.lat = position.coords.latitude;
           this.lon = position.coords.longitude;
-          console.log('123   ', this.lat, this.lon);
+          // console.log('123   ', this.lat, this.lon);
         } else {
           this.lat = this.selectedCity.lat;
           this.lon = this.selectedCity.lon;
-          console.log('1234   ', this.lat, this.lon);
+          // console.log('1234   ', this.lat, this.lon);
         }
 
         const [curCity, curDay, aqi] = await Promise.all([
@@ -235,13 +219,10 @@ export class Content {
         ]);
 
         this.curCity = curCity;
-        console.log('new city fecth ' + curCity.cityName);
+        // console.log('new city fecth ' + curCity.cityName);
         this.curDay = curDay;
         this.weatherChange.emit(this.curDay);
         this.aqi = aqi;
-
-
-
         resolve();
       })
     });
@@ -311,22 +292,13 @@ export class Content {
   }
 
  
-  tempUnit: 'C' | 'F' = 'C';
+  tempUnit = signal('C');
 
   toggleTempUnit() {
-    this.tempUnit = this.tempUnit === 'C' ? 'F' : 'C';
+    if (this.tempUnit()==='C') this.tempUnit.set('F');
+    else this.tempUnit.set('C');
   }
 
-  toDisplayTemp(celsius: number): number {
-    if (celsius == null || !Number.isFinite(celsius)) return 0;
-    return this.tempUnit === 'C'
-      ? Math.round(celsius)
-      : Math.round((celsius * 9) / 5 + 32);
-  }
-
-  tempSuffix(): string {
-    return '°'+this.tempUnit;
-  }
   toggleLocate() {
     this.time = 0;
     this.draftCity='';

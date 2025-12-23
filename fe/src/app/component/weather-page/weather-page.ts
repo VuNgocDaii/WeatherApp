@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
-import { SideBar } from "./side-bar/side-bar";
-import { Content } from "./content/content";
-import { HourService } from '../service/hour-service'; 
-import { Hour } from '../model/hour';      
+import { SideBar } from '../side-bar/side-bar';
+import { Content } from '../content/content';
+import { HourService } from '../../service/hour-service';
+import { Hour } from '../../model/hour';   
 import { NgClass } from '@angular/common'; 
 import { Router } from '@angular/router';  
-import { Map } from './map/map/map';         
+import { Map } from 'maplibre-gl';       
 
 @Component({
   selector: 'app-weather-page',
-  imports: [SideBar, Content, NgClass, Map],
+  imports: [SideBar, Content, NgClass],
   templateUrl: './weather-page.html',
   styleUrl: './weather-page.scss',
 })
@@ -24,30 +24,21 @@ export class WeatherPage {
   onWeatherChange(day: Hour) {
     this.curDay = day;
   }
-
   private bgKeyFromIcon(icon: string): string {
     const s = (icon || '').toLowerCase();
-
     if (s.includes('thunder') || s === 'lightning') return 'thunder';
     if (s.includes('tornado')) return 'thunder';
-
     if (s.includes('extreme-rain') || s.includes('overcast-rain')) return 'rain';
     if (s.includes('rain') || s.includes('drizzle')) return 'rain';
-
     if (s.includes('sleet')) return 'sleet';
     if (s.includes('hail')) return 'hail';
-
     if (s.includes('snow') || s.includes('snowflake') || s.includes('wind-snow')) return 'snow';
-
     if (s.includes('fog') || s.includes('mist') || s.includes('haze')) return 'fog';
-
     if (s.includes('dust') || s.includes('smoke')) return 'dust';
     if (s.includes('wind')) return 'wind';
-
     if (s.includes('partly-cloudy')) return 'partly';
     if (s.includes('cloudy') || s.includes('overcast')) return 'cloudy';
     if (s.includes('clear')) return 'clear';
-
     return 'cloudy';
   }
 

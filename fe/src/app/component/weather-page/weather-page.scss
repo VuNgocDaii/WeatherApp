@@ -1,4 +1,4 @@
-.weather-bg{
+.weather-bg {
   position: relative;
   overflow: hidden;
   min-height: 100vh;
@@ -7,44 +7,186 @@
   background: linear-gradient(180deg, #1f334e 0%, #14243a 70%, #0f1828 100%) !important;
 }
 
-.weather-fx{
+.weather-fx {
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 0;
 }
 
-.sidebar, .content{ position: relative; z-index: 1; }
+.sidebar,
+.content {
+  position: relative;
+  z-index: 1;
+}
 
-.bg--clear.is-day{ background: linear-gradient(180deg,#2b4a74 0%,#1a2a44 70%,#101a2b 100%) !important; }
-.bg--clear.is-night{ background: linear-gradient(180deg,#0b1324 0%,#0a0f1c 70%,#070a12 100%) !important; }
+.weather-bg{
+  position: relative;
+  overflow: hidden;
+}
+.weather-bg::before{
+  content:"";
+  position:absolute; inset:0;
+  pointer-events:none;
+ 
+  background: radial-gradient(1200px 600px at 50% -10%, rgba(255,255,255,.20), rgba(255,255,255,0) 60%);
+  mix-blend-mode: screen;
+  opacity:.55;
+}
+.weather-bg::after{
+  content:"";
+  position:absolute; inset:0;
+  pointer-events:none;
+ 
+  background: radial-gradient(900px 500px at 50% 10%, rgba(0,0,0,0), rgba(0,0,0,.35) 75%);
+  opacity:.55;
+}
 
-.bg--partly.is-day{ background: linear-gradient(180deg,#233b5d 0%,#17243b 70%,#101a2b 100%) !important; }
-.bg--partly.is-night{ background: linear-gradient(180deg,#0b1324 0%,#0a0f1c 70%,#070a12 100%) !important; }
+.bg--clear.is-day{
+  background: linear-gradient(180deg,
+    #4da3ff 0%,
+    #2d73d6 38%,
+    #1d3f73 72%,
+    #122844 100%) !important;
+}
+.bg--clear.is-night{
+  background: linear-gradient(180deg,
+    #0b1a3a 0%,
+    #08122a 45%,
+    #050a18 100%) !important;
+}
 
-.bg--cloudy.is-day{ background: linear-gradient(180deg,#1f334e 0%,#14243a 70%,#0f1828 100%) !important; }
-.bg--cloudy.is-night{ background: linear-gradient(180deg,#0a1020 0%,#070b14 75%,#05070d 100%) !important; }
+/* ===== PARTLY CLOUDY ===== */
+.bg--partly.is-day{
+  background: linear-gradient(180deg,
+    #6ea6ff 0%,
+    #3f78d6 40%,
+    #2a4a7c 75%,
+    #1a2f4d 100%) !important;
+}
+.bg--partly.is-night{
+  background: linear-gradient(180deg,
+    #0c1a35 0%,
+    #081125 55%,
+    #050914 100%) !important;
+}
 
-.bg--fog.is-day{ background: linear-gradient(180deg,#2a3b52 0%,#1b2a3d 70%,#121c2a 100%) !important; }
-.bg--fog.is-night{ background: linear-gradient(180deg,#0c1222 0%,#070b14 80%,#05070d 100%) !important; }
+.bg--cloudy.is-day{
+  background: linear-gradient(180deg,
+    #7b8fa6 0%,
+    #556a83 40%,
+    #35485f 78%,
+    #1f2f45 100%) !important;
+}
+.bg--cloudy.is-night{
+  background: linear-gradient(180deg,
+    #121a2a 0%,
+    #0b111c 60%,
+    #060912 100%) !important;
+}
 
-.bg--rain.is-day{ background: linear-gradient(180deg,#162a44 0%,#0f1e32 70%,#0b1422 100%) !important; }
-.bg--rain.is-night{ background: linear-gradient(180deg,#070c18 0%,#050812 75%,#04060c 100%) !important; }
+.bg--fog.is-day{
+  background: linear-gradient(180deg,
+    #c6d3df 0%,
+    #94a7b9 45%,
+    #5a7187 80%,
+    #3a5064 100%) !important;
+}
+.bg--fog.is-night{
+  background: linear-gradient(180deg,
+    #1a2433 0%,
+    #0f1622 65%,
+    #080c14 100%) !important;
+}
 
-.bg--snow.is-day{ background: linear-gradient(180deg,#29415f 0%,#1a2d45 70%,#101a2b 100%) !important; }
-.bg--snow.is-night{ background: linear-gradient(180deg,#0b1222 0%,#070b14 78%,#05070d 100%) !important; }
+.bg--rain.is-day{
+  background: linear-gradient(180deg,
+    #4b7db8 0%,
+    #2d4f7b 42%,
+    #1a2f4c 78%,
+    #111c2d 100%) !important;
+}
+.bg--rain.is-night{
+  background: linear-gradient(180deg,
+    #0b1a2f 0%,
+    #070f1e 60%,
+    #040813 100%) !important;
+}
+
+
+.bg--snow.is-day{
+  background: linear-gradient(180deg,
+    #d7e7ff 0%,
+    #a9c4ef 45%,
+    #6b8fc5 80%,
+    #3b5d8b 100%) !important;
+}
+.bg--snow.is-night{
+  background: linear-gradient(180deg,
+    #13203a 0%,
+    #0a1224 62%,
+    #050914 100%) !important;
+}
 
 .bg--thunder.is-day,
-.bg--thunder.is-night{ background: linear-gradient(180deg,#0f1830 0%,#070b14 80%,#05070d 100%) !important; }
+.bg--thunder.is-night{
+  background: linear-gradient(180deg,
+    #2b2a56 0%,
+    #161a36 45%,
+    #0a0b14 100%) !important;
+}
 
-.bg--dust.is-day{ background: linear-gradient(180deg,#3a3a2f 0%,#24231c 75%,#171610 100%) !important; }
-.bg--dust.is-night{ background: linear-gradient(180deg,#1b1a14 0%,#11100c 80%,#090805 100%) !important; }
+.bg--dust.is-day{
+  background: linear-gradient(180deg,
+    #e0b37a 0%,
+    #b8844f 45%,
+    #7b4f2f 80%,
+    #4c2f1c 100%) !important;
+}
+.bg--dust.is-night{
+  background: linear-gradient(180deg,
+    #3a2a1a 0%,
+    #20170f 70%,
+    #0f0b07 100%) !important;
+}
 
-.bg--wind.is-day{ background: linear-gradient(180deg,#1b3a42 0%,#142b33 75%,#0f1b22 100%) !important; }
-.bg--wind.is-night{ background: linear-gradient(180deg,#08141a 0%,#050b10 80%,#04070a 100%) !important; }
+.bg--wind.is-day{
+  background: linear-gradient(180deg,
+    #76d7c5 0%,
+    #3aaea6 45%,
+    #1e6c73 82%,
+    #123a42 100%) !important;
+}
+.bg--wind.is-night{
+  background: linear-gradient(180deg,
+    #0b2430 0%,
+    #07151c 70%,
+    #040b10 100%) !important;
+}
 
-.bg--sleet.is-day{ background: linear-gradient(180deg,#233a52 0%,#16283a 75%,#0f1828 100%) !important; }
-.bg--sleet.is-night{ background: linear-gradient(180deg,#07101e 0%,#050812 80%,#04060c 100%) !important; }
-
-.bg--hail.is-day{ background: linear-gradient(180deg,#20344e 0%,#15253a 75%,#0e1626 100%) !important; }
-.bg--hail.is-night{ background: linear-gradient(180deg,#070c18 0%,#050812 80%,#04060c 100%) !important; }
+.bg--sleet.is-day{
+  background: linear-gradient(180deg,
+    #a6c8ff 0%,
+    #5a86c9 45%,
+    #2f4b78 82%,
+    #1a2b48 100%) !important;
+}
+.bg--sleet.is-night{
+  background: linear-gradient(180deg,
+    #0f2140 0%,
+    #081227 70%,
+    #050914 100%) !important;
+}
+.bg--hail.is-day{
+  background: linear-gradient(180deg,
+    #b7d5ff 0%,
+    #6a9ad6 45%,
+    #355a8a 82%,
+    #1f3556 100%) !important;
+}
+.bg--hail.is-night{
+  background: linear-gradient(180deg,
+    #0d1f3a 0%,
+    #071125 70%,
+    #040813 100%) !important;
+}

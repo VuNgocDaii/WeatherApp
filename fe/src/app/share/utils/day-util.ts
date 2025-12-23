@@ -1,19 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Day } from '../../model/day';
-////
-export type DayDTO = {
-  time: string;
-  cityId: number;
-  weatherCode: number;
-  maxTemp: number;
-  minTemp: number;
-  sunrise: Date;
-  sunset: Date;
-  maxWindSpeed: number;
-  icon:string;
-};
-
-////
+import { DayDTO, fromDayDTO, toDayDTO,normalizeDay, dateInt } from './date-util';
 export type treeItem = {
   key: number;
   days: DayDTO[];
@@ -34,46 +21,7 @@ class Node {
     this.value = value ?? new Map<number, Day>();
   }
 }
-///
-function toDTO(d: Day): DayDTO {
-    return {
-      time: d.time.toISOString(),
-      cityId: d.cityId,
-      weatherCode: d.weatherCode,
-      maxTemp: d.maxTemp,
-      minTemp: d.minTemp,
-      sunrise: d.sunrise,
-      sunset: d.sunset,
-      maxWindSpeed: d.maxWindSpeed,
-      icon: d.icon
-    };
-  }
 
-function fromDTO(x: DayDTO): Day {
-    return new Day(
-      new Date(x.time),
-      x.cityId,
-      x.weatherCode,
-      x.maxTemp,
-      x.minTemp,
-      new Date(x.sunrise),
-      new Date(x.sunset),
-      x.maxWindSpeed,
-      x.icon
-    );
-  }
-///
-
-function normalizeDay(d: Date): Date {
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
-}
-function dateInt(d: Date): number {
-  let y = d.getFullYear();
-  let m = d.getMonth() + 1;
-  let dd = d.getDate();
-  return y * 10000 + m * 100 + dd;
-}
-///
 function h(n: Node | null) { return n ? n.height : 0; }
 function update(n: Node) { n.height = Math.max(h(n.left), h(n.right)) + 1; }
 function bf(n: Node) { return h(n.left) - h(n.right); }
@@ -172,12 +120,12 @@ export class DayTree {
     const a = dateInt(normalizeDay(from));
     const b = dateInt(normalizeDay(to));
     const out: Day[] = [];
-    
+
     this._range(this.root, a, b, (node) => {
       const d = node.value.get(cityId);
       if (d) out.push(d);
     });
-   // console.log(out);
+    // console.log(out);
     return out;
   }
 
@@ -203,7 +151,7 @@ export class DayTree {
     this._inorder(this.root, (node) => {
       out.push({
         key: node.key,
-        days: Array.from(node.value.values()).map(toDTO),
+        days: Array.from(node.value.values()).map(toDayDTO),
       });
     });
     return out;
@@ -229,7 +177,7 @@ export class DayTree {
     const node = new Node(item.key);
 
     for (const dto of item.days) {
-      const day = fromDTO(dto);
+      const day = fromDayDTO(dto);
       day.time = normalizeDay(day.time);
       node.value.set(day.cityId, day);
     }
@@ -249,15 +197,15 @@ export class DayTree {
   }
 
   keyToLocalDate(key: number): Date {
-  const y = Math.floor(key / 10000);
-  const m = Math.floor((key % 10000) / 100);
-  const d = key % 100;
-  return new Date(y, m - 1, d, 0, 0, 0, 0);
-}
+    const y = Math.floor(key / 10000);
+    const m = Math.floor((key % 10000) / 100);
+    const d = key % 100;
+    return new Date(y, m - 1, d, 0, 0, 0, 0);
+  }
 
   getMaxDate(): Date {
     const now = new Date();
-    const infi = new Date(now.getFullYear(), now.getMonth()+1, now.getDate(), 0, 0, 0, 0);
+    const infi = new Date(now.getFullYear(), now.getMonth() + 1, now.getDate(), 0, 0, 0, 0);
     const k = this.getMaxKey();
     if (k == null) return infi;
     return this.keyToLocalDate(k);

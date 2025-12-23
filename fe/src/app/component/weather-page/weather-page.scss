@@ -4,7 +4,6 @@
   min-height: 100vh;
   width: 100%;
 
-  /* fallback để KHÔNG BAO GIỜ bị đen */
   background: linear-gradient(180deg, #1f334e 0%, #14243a 70%, #0f1828 100%) !important;
 }
 
@@ -17,7 +16,6 @@
 
 .sidebar, .content{ position: relative; z-index: 1; }
 
-/* ===== define đầy đủ key ===== */
 .bg--clear.is-day{ background: linear-gradient(180deg,#2b4a74 0%,#1a2a44 70%,#101a2b 100%) !important; }
 .bg--clear.is-night{ background: linear-gradient(180deg,#0b1324 0%,#0a0f1c 70%,#070a12 100%) !important; }
 
@@ -39,7 +37,6 @@
 .bg--thunder.is-day,
 .bg--thunder.is-night{ background: linear-gradient(180deg,#0f1830 0%,#070b14 80%,#05070d 100%) !important; }
 
-/* các key bạn có trong icon map */
 .bg--dust.is-day{ background: linear-gradient(180deg,#3a3a2f 0%,#24231c 75%,#171610 100%) !important; }
 .bg--dust.is-night{ background: linear-gradient(180deg,#1b1a14 0%,#11100c 80%,#090805 100%) !important; }
 

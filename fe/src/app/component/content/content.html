@@ -88,7 +88,7 @@
       <div class="today-scroll">
         @for (f of forecastToday; track f.time) {
         <div class="forecast-item">
-          <h1 class="t">{{ formatHour(f.time) }}</h1>
+          <h1 class="t">{{ f.time | hour}}</h1>
 
           <img class="ico" [src]="'/assets/weather-icons/' + f.icon + '.svg'" alt="icon" style="width: 80%;" />
           <div class="temp"> {{f.temp | deegre : tempUnit()}}°{{tempUnit()}}</div>

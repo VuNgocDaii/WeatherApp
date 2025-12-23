@@ -2,21 +2,16 @@ import { Injectable } from '@angular/core';
 import { Hour } from '../model/hour';
 import { WMO_ICON_MAP,STORAGE_HOUR } from '../share/constants/constans';
 import { HourTree } from '../share/utils/hour-util';
-
+import { getWmoIcon } from '../share/utils/weather-code-util';
+import { isDayTime } from '../share/utils/date-util';
+import { toDate } from '../share/utils/date-util';
+import { fromDTO,toDTO } from '../share/utils/date-util';
 @Injectable({
   providedIn: 'root',
 })
 export class HourService {
   private tree = new HourTree();
   private loaded = false;
-
-  isDayTime(time: any): boolean {
-    return this.tree.isDayTime(time);
-  }
-
-  toDate(value: any): Date | null {
-    return this.tree.toDate(value);
-  }
 
   load(): Hour[] {
     this.ensureLoaded();
@@ -33,7 +28,7 @@ export class HourService {
   ) {
     this.ensureLoaded();
 
-    const newIcon = this.getWmoIcon(newWeatherCode, this.isDayTime(newTime));
+    const newIcon = getWmoIcon(newWeatherCode, isDayTime(newTime));
 
     const item = new Hour(
       newTime,
@@ -63,7 +58,7 @@ export class HourService {
     const data = await res.json();
 
     const now = new Date();
-    const newIcon = this.getWmoIcon(data.current.weather_code, (data.current.is_day === 1));
+    const newIcon = getWmoIcon(data.current.weather_code, (data.current.is_day === 1));
     let dataHour = new Hour(
       now,
       0,
@@ -92,11 +87,6 @@ export class HourService {
     return String(data.current.us_aqi);
   }
 
-  getWmoIcon(code: number, isDay: boolean): string {
-    const def = WMO_ICON_MAP[code] ?? 'not-available';
-    return typeof def === 'string' ? def : isDay ? def.day : def.night;
-  }
-
   private ensureLoaded() {
     if (this.loaded) return;
     this.loaded = true;
@@ -109,7 +99,7 @@ export class HourService {
     try {
       const raw = JSON.parse(json) as any[];
       for (const dto of raw) {
-        const h = this.tree.fromDTO(dto, (code, isDay) => this.getWmoIcon(code, isDay));
+        const h = fromDTO(dto, (code, isDay) => getWmoIcon(code, isDay));
         if (h) this.tree.insert(this.tree.hourKey(h.time), h);
       }
     } catch {
@@ -117,7 +107,7 @@ export class HourService {
   }
 
   private persist() {
-    const list = this.tree.toArray().map((h) => this.tree.toDTO(h));
+    const list = this.tree.toArray().map((h) => toDTO(h));
     localStorage.setItem(STORAGE_HOUR, JSON.stringify(list));
   }
 }

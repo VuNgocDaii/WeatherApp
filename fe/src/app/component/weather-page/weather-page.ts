@@ -6,7 +6,8 @@ import { Hour } from '../../model/hour';
 import { NgClass } from '@angular/common'; 
 import { Router } from '@angular/router';  
 import { Map } from 'maplibre-gl';       
-
+import { getWmoIcon } from '../../share/utils/weather-code-util';
+import { isDayTime } from '../../share/utils/date-util';
 @Component({
   selector: 'app-weather-page',
   imports: [SideBar, Content, NgClass],
@@ -44,8 +45,8 @@ export class WeatherPage {
 
   get bgClass(): string {
     const code = this.curDay?.weatherCode ?? 0;
-    const isDay = this.hourService.isDayTime(this.curDay?.time ?? new Date());
-    const icon = this.hourService.getWmoIcon(code, isDay);
+    const isDay = isDayTime(this.curDay?.time ?? new Date());
+    const icon = getWmoIcon(code, isDay);
 
     const key = this.bgKeyFromIcon(icon);
     return `bg--${key} ${isDay ? 'is-day' : 'is-night'}`;
@@ -53,11 +54,9 @@ export class WeatherPage {
 
   get fxClass(): string {
     const code = this.curDay?.weatherCode ?? 0;
-    const isDay = this.hourService.isDayTime(this.curDay?.time ?? new Date());
-    const icon = this.hourService.getWmoIcon(code, isDay);
-
+    const isDay = isDayTime(this.curDay?.time ?? new Date());
+    const icon = getWmoIcon(code, isDay);
     const key = this.bgKeyFromIcon(icon);
-
     if (key === 'rain') return 'fx--rain';
     if (key === 'snow') return 'fx--snow';
     if (key === 'thunder') return 'fx--thunder';

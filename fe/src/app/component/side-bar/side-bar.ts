@@ -1,7 +1,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { Day } from '../../model/day';
-import { DayTree } from '../../utils/day-util';
+import { DayTree } from '../../share/utils/day-util';
 import { DayService } from '../../service/day-service';
 import { STORAGE_CITY } from '../../share/constants/constans';
 import { City } from '../../model/city';

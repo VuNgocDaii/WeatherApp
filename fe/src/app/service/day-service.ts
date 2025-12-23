@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Day } from '../model/day';
-import { DayTree, treeItem } from '../utils/day-util';
+import { DayTree,treeItem } from '../share/utils/day-util';
 import { STORAGE_DAY } from '../share/constants/constans';
 @Injectable({
   providedIn: 'root',

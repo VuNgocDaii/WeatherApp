@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Hour } from '../model/hour';
 import { WMO_ICON_MAP,STORAGE_HOUR } from '../share/constants/constans';
-import { HourTree } from '../utils/hour-util';
+import { HourTree } from '../share/utils/hour-util';
 
 @Injectable({
   providedIn: 'root',

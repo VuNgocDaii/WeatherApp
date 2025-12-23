@@ -1,4 +1,4 @@
-import { Hour } from '../model/hour';
+import { Hour } from "../../model/hour";
 
 export type HourDTO = {
   time: string;

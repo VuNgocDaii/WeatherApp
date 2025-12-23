@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Day } from '../model/day';
+import { Day } from '../../model/day';
 ////
 export type DayDTO = {
   time: string;

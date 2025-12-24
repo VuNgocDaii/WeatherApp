@@ -4,15 +4,16 @@ import { FormsModule } from '@angular/forms';
 import { CityService } from '../../service/city-service';
 import { isPlatformBrowser, NgIf } from '@angular/common';
 import { Inject, PLATFORM_ID } from '@angular/core';
+import { SideBar } from '../side-bar/side-bar';
 type WeatherLayer = { id: string; label: string; tile: string };
 
 @Component({
   selector: 'app-map',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule ],
   templateUrl: './map.html',
   styleUrl: './map.scss',
 })
-export class Map implements AfterViewInit, OnDestroy {
+export class Map {
   MAPTILER_KEY = 'RbAmeLkSfcHaD8uF3xLs';
   OPEN_WEATHER_KEY = '8dbd93011c9639f3899f8bcdb229f5e9';
   constructor(private cityService: CityService, @Inject(PLATFORM_ID) private platformId: Object) { }
@@ -38,11 +39,6 @@ export class Map implements AfterViewInit, OnDestroy {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-    this.city = await this.getUserLocation();
-    console.log(this.city);
-    this.searchCity();
-  }
-  async ngAfterViewInit() {
     const maplibre = await import('maplibre-gl');
     this.maplibregl = maplibre;
 
@@ -68,12 +64,8 @@ export class Map implements AfterViewInit, OnDestroy {
       const { lng, lat } = e.lngLat;
       this.showPopupWeather(lng, lat);
     });
-  }
-
-  ngOnDestroy(): void {
-    try {
-      this.map?.remove?.();
-    } catch { }
+    this.city = await this.getUserLocation();
+    await this.searchCity();
   }
 
   lat: number = 0;
@@ -83,12 +75,17 @@ export class Map implements AfterViewInit, OnDestroy {
     navigator.geolocation.getCurrentPosition(async position => {
       this.lat = position.coords.latitude;
       this.lon = position.coords.longitude;
-      const curCity = await this.cityService.loadCityInfo(await this.cityService.add('none', this.lat, this.lon, false));
-      console.log(curCity.cityName);
-      res = curCity.cityName;
-      return res;
+      let urlAddCity = 'http://api.openweathermap.org/geo/1.0/reverse?lat=' + String(this.lat) + '&lon=' + String(this.lon) + '&limit=1&appid=' + this.OPEN_WEATHER_KEY;
+       let res = await fetch(urlAddCity);
+      let data = await res.json();
+     //  console.log(curCity.cityName);
+      this.city = data[0].name;
+      // this.searchCity();
+
+      return this.city;
 
     });
+    
     return res;
   }
   toggleLayer(id: string) {
@@ -121,10 +118,10 @@ export class Map implements AfterViewInit, OnDestroy {
     });
   }
 
-  async searchCity() {
+  async searchCity(): Promise<void> {
     const city = this.city.trim();
     if (!city) return;
-
+    console.log('searchCity '+city);
     try {
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(

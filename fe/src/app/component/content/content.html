@@ -1,4 +1,4 @@
-<div class="grid grid-nogutter h-full w-full">
+<div class="grid grid-nogutter h-full w-full screen">
 
   <div class="col-7 flex  flex-column ">
     <div style="width: 100%;height: 4.5%;margin-top: 15px;">
@@ -18,6 +18,13 @@
 
     @if (!loading()){
     <div class="grid grid-nogutter city-info-container">
+      <div style="width:5%; display:flex; align-items:flex-start; justify-content:center;margin-top:32px;">
+        <button [pTooltip]="isFav ? 'Remove from favourite' : 'Add to favourite'" tooltipPosition="bottom"
+          tooltipEvent="hover" (click)="toggleFav(curCity.cityId)" [class.active]="isFav" class="fav-btn">
+          <i class="pi" [ngClass]="isFav ? 'pi-star-fill' : 'pi-star'"></i>
+        </button>
+      </div>
+
       <div class="col-7 flex-column city-info-status">
         <h1 class="city-info-name">{{curCity.cityName}}</h1>
 
@@ -26,7 +33,7 @@
         <h3 class="city-info-description">{{curWeatherDescription}} </h3>
       </div>
 
-      <img class="col" [src]="'/assets/weather-icons/' + curDay.icon + '.svg'" class="city-info-img" alt="weather" />
+      <img class="col-4" [src]="'/assets/weather-icons/' + curDay.icon + '.svg'" class="city-info-img" alt="weather" />
 
     </div>
 
@@ -104,16 +111,33 @@
 
   <div class="col flex flex-column hub-button-container">
     <div class="hub-container">
+
+      <div class="fav-wrapper">
+        <button type="button" (click)="toggleFavourite()" class="locate-btn">
+          Favourite List
+        </button>
+
+        <div *ngIf="showFavourite" class="favourite-list">
+          <ul>
+            @for (item of favourites; track item.cityId){
+            <li (click)="loadCurFavorCityPage(item)" style="cursor: pointer;">
+              {{ item.cityName }}
+            </li>
+            }
+          </ul>
+        </div>
+      </div>
+
       <button type="button" (click)="toggleLocate()" class="locate-btn">
         <i class="bi bi-geo-alt-fill"></i>
       </button>
+
       <button type="button" (click)="toggleTempUnit()" class="temp-btn">
         °{{ tempUnit() === 'C' ? 'F' : 'C' }}
-
       </button>
 
-
     </div>
+
     <div class="week-forecast-panel">
       <h1 class="week-forecast-title">7-DAY FORECAST
       </h1>

@@ -13,6 +13,7 @@ import { STORAGE_CITY } from '../../share/constants/constans';
 import { WMO_ICON_MAP, WMO_WW_EN } from '../../share/constants/constans';
 import { DeegrePipe } from '../../share/pipe/deegrePipe';
 import { toDate } from '../../share/utils/date-util';
+import { TooltipModule } from 'primeng/tooltip';
 import { HourPipe } from '../../share/pipe/hourPipe';
 import { weatherDescFromCode } from '../../share/utils/weather-code-util';
 import { isDayTime } from '../../share/utils/date-util';
@@ -21,6 +22,7 @@ import { getWmoIcon } from '../../share/utils/weather-code-util';
 import { compareDay } from '../../share/utils/date-util';
 import { Inject, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+
 
 
 
@@ -35,7 +37,7 @@ type CityDTO = {
 
   templateUrl: './content.html',
   styleUrl: './content.scss',
-  imports: [CommonModule, AutoCompleteModule, FormsModule, DeegrePipe, HourPipe],
+  imports: [CommonModule, AutoCompleteModule, FormsModule, DeegrePipe, HourPipe, TooltipModule],
 })
 export class Content {
 
@@ -72,6 +74,8 @@ export class Content {
   citySuggestions: CityDTO[] = [];
   // temperary search string
   draftCity: any = '';
+  //
+  isFav = false;
   constructor(private cityService: CityService, private hourService: HourService, private dayService: DayService,
     @Inject(PLATFORM_ID) private platformId: Object) {
     effect(() => {
@@ -146,6 +150,7 @@ export class Content {
   }
 
   async loadCurCityPage(mode: boolean) {
+    this.showFavourite = false;
     this.forecast7Days = [];
     if (!isPlatformBrowser(this.platformId)) {
       return;
@@ -154,8 +159,11 @@ export class Content {
     let dataLocateCity = this.cityService.load();
     console.log(this.loading);
     await this.getUserLocation(mode);
-    console.log(this.curCity.lat + ' ' + this.curCity.lon + ' ' + this.curCity.cityName + ' ' + this.aqi);
+    this.isFav = this.curCity.isFavour;
+
+
     for (let d of dataLocateCity) if (d.cityId === this.curCity.cityId) checkCityExisted = true;
+    console.log(this.curCity.cityId + ' ' + this.curCity.lon + ' ' + this.curCity.cityName + ' ' + this.aqi + ' ' + this.isFav);
     this.curWeatherDescription = weatherDescFromCode(this.curDay.weatherCode);
     console.log(this.curDay);
     console.log(this.loading);
@@ -255,4 +263,32 @@ export class Content {
     this.loadCurCityPage(true);
   }
 
+  toggleFav(cityId: number) {
+    this.showFavourite = false;
+    this.isFav = !this.isFav;
+    this.cityService.changeFavor(cityId);
+  }
+
+  showFavourite = false;
+
+  favourites: City[] = [
+  ];
+
+  toggleFavourite() {
+    console.log('???');
+    this.favourites = this.cityService
+      .loadFavourCity()
+      .sort((a, b) => a.cityName.localeCompare(b.cityName));
+
+    this.showFavourite = !this.showFavourite;
+  }
+
+  loadCurFavorCityPage(city: City) {
+    this.curCity = city;
+    this.selectedCity.cityName = city.cityName;
+    this.selectedCity.country = city.country;
+    this.selectedCity.lat = city.lat;
+    this.selectedCity.lon = city.lon;
+    this.loadCurCityPage(false);
+  }
 }

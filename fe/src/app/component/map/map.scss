@@ -14,9 +14,10 @@
 }
 
 .panel {
+  margin-left: 7%;
+  z-index: 10;
   position: absolute;
-  top: 12px;
-  left: 12px;
+  top: 25px;
   background: rgba(0, 0, 0, 0.6);
   padding: 14px;
   border-radius: 10px;
@@ -75,9 +76,11 @@ h3 {
 }
 
 .legend {
+  z-index: 10;
   position: absolute;
-  bottom: 10px;
-  left: 10px;
+  bottom: 5%;
+  margin-left: 7%;
+  // left: 10px;
   background: rgba(0, 0, 0, 0.6);
   border-radius: 6px;
   padding: 6px 10px;
@@ -86,6 +89,7 @@ h3 {
 }
 
 .legend-bar {
+  
   height: 8px;
   width: 220px;
   background: linear-gradient(
@@ -104,3 +108,4 @@ h3 {
   color: black;
   font-size: 14px;
 }
+

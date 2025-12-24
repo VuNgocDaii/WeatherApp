@@ -8,7 +8,7 @@
 }
 
 .city-info-status {
-  margin-left: 3rem;
+  margin-left: 0px;
 }
 
 .city-info-name{
@@ -22,7 +22,7 @@
 }
 
 .city-info-description {
-  color: gray;
+  color: white;
   margin:0px;
   font-weight: 200;
 }
@@ -220,4 +220,65 @@
 .city-ac-meta {
   color: rgba(255, 255, 255, 0.55);
   font-size: 12px;
+}
+
+
+.fav-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.fav-btn .pi {
+  font-size: 28px;   
+  color: #999;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.fav-btn.active .pi {
+  color: #f5c518;   
+  transform: scale(1.2);
+}
+
+.fav-btn:hover .pi {
+  transform: scale(1.15);
+}
+
+
+.fav-wrapper {
+  position: relative; 
+}
+
+.favourite-list {
+  position: absolute;
+  top: calc(100% + 8px); 
+  left: 0;
+
+  z-index: 9999;
+  width: 220px;
+  max-height: 10rem;
+
+  background: #1f2b3a;
+  color: white;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+
+  overflow: hidden;
+}
+
+.favourite-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 10rem;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.favourite-list ul li {
+  margin: 10px;
+}
+.favourite-list ul::-webkit-scrollbar {
+  display: none;
 }

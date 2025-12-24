@@ -194,3 +194,20 @@ export const WMO_WW_EN: Record<number, string> = {
   98: "Thunderstorm with duststorm/sandstorm",
   99: "Thunderstorm (heavy) with hail",
 };
+
+export const bgList = [
+  {key: ['clear', 'day'] , bg: '/assets/bg/clear_day.jpg'},
+  {key: ['clear', 'night'] , bg: '/assets/bg/clear_night.jpg'},
+  {key: ['cloudy', 'day'] , bg: '/assets/bg/cloudy_day.jpg'},
+  {key: ['cloudy', 'night'] , bg: '/assets/bg/cloudy_night.jpg'},
+  {key: ['fog', 'day'] , bg: '/assets/bg/fog_day.jpg'},
+  {key: ['fog', 'night'] , bg: '/assets/bg/fog_night.jpg'},
+  {key: ['partly', 'day'] , bg: '/assets/bg/partly_day.jpg'},
+  {key: ['partly', 'night'] , bg: '/assets/bg/partly_night.jpg'},
+  {key: ['rain', 'day'] , bg: '/assets/bg/rain_day.jpg'},
+  {key: ['rain', 'night'] , bg: '/assets/bg/rain_night.jpg'},
+  {key: ['snow', 'day'] , bg: '/assets/bg/snow_day.jpg'},
+  {key: ['snow', 'night'] , bg: '/assets/bg/snow_night.jpg'},
+  {key: ['thunder', 'day'] , bg: '/assets/bg/thunder.jpg'},
+  {key: ['thunder', 'night'] , bg: '/assets/bg/thunder.jpg'},
+]

@@ -110,4 +110,26 @@ export class CityService {
     let target = cities.filter(c => c.cityId === curCityId);
     return target[0];
   }
+
+  changeFavor(curCityId: number): void{
+     let cities = this.load();
+        const index = cities.findIndex(t => t.cityId === curCityId );
+
+        if (index>-1) {
+            cities[index].isFavour = !cities[index].isFavour ;
+            localStorage.setItem(STORAGE_CITY, JSON.stringify(cities));
+        } 
+  }
+  loadFavourCity(){
+    const json = localStorage.getItem(STORAGE_CITY);
+    if (!json) return [];
+    try {
+      let cities = JSON.parse(json) as City[];
+      cities = cities.filter(c=>c.isFavour===true);
+      return cities;
+    }
+    catch {
+      return [];
+    }
+  }
 }

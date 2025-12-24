@@ -137,3 +137,17 @@ export function dateInt(d: Date): number {
   let dd = d.getDate();
   return y * 10000 + m * 100 + dd;
 }
+
+export function wmoToKey(code: number): string {
+  if (code === 0) return 'clear';
+  if (code === 1 || code === 2) return 'partly';
+  if (code === 3) return 'cloudy';
+  if (code === 45 || code === 48) return 'fog';
+  if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) return 'rain';
+  if ([56, 57, 66, 67].includes(code)) return 'sleet';
+  if ([71, 73, 75, 77, 85, 86].includes(code)) return 'snow';
+  if (code === 95) return 'thunder';
+  if (code === 96 || code === 99) return 'hail';
+  return 'cloudy';
+}
+

@@ -8,6 +8,6 @@ export class DeegrePipe implements PipeTransform {
     if(tempUnit === 'F'){
         return Math.round((value*9)/5+32);
     }
-    return value;
+    return Math.round(value);
   }
 }

@@ -1,17 +1,14 @@
 <div class="sidebar">
-  <div class="logo">
- 
-  </div>
 
-  <nav class="nav">
-    <a class="nav-item ">
+  <nav class="nav" >
+    <a class="nav-item " [class.active]="isActive('/')" (click)="goTo('/')">
       <i class="pi pi-cloud"></i>
-      <span>Weather</span>
+       <button type="button" class="btn"  >Weather</button>
     </a>
 
-    <a class="nav-item">
+    <a class="nav-item" [class.active]="isActive('/map')" (click)="goTo('/map')">
       <i class="pi pi-map"></i>
-      <button type="button" class="btn" routerLink="/map"  >Map</button>
+      <button type="button" class="btn"  >Map</button>
     </a>
 
   </nav>

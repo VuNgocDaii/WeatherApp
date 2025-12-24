@@ -1,14 +1,15 @@
-<main class="grid grid-nogutter w-full weather-bg" [ngClass]="bgClass" style="min-height: 100vh;">
-  <div class="weather-fx" [ngClass]="fxClass"></div>
-  <!-- <div style="position:fixed;bottom:8px;left:8px;color:white;z-index:9999;font-size:12px;">
-  {{ bgClass }} | {{ fxClass }}
-</div> -->
-
+<main class="grid grid-nogutter w-full weather-bg" >
+  <!-- <div>{{ key | backgr : dn }}</div> -->
+ <img
+  class="bg-img"
+  src="{{ key | backgr : dn }}"
+  alt="weather background"
+/>
   <app-side-bar class="col-1 sidebar"></app-side-bar>
   @if (curUrl === '/') {
   <app-content class="col-11 content" (weatherChange)="onWeatherChange($event)"></app-content>
   }
   @else {
-    <!-- <app-map class="col content"></app-map> -->
+    <app-map class="map"></app-map>
   }
 </main>

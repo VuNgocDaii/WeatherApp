@@ -20,5 +20,15 @@ export class SideBar implements OnInit {
 
   async ngOnInit(): Promise<void> {
   }
+
+  goTo(url: string) {
+    console.log('goto '+url);
+    this.router.navigate([url]);
+  }
+
+  
+isActive(path: string): boolean {
+  return this.router.url === path;
+}
 }
 

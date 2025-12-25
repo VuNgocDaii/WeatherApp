@@ -158,7 +158,10 @@ export class CompareModal {
       xaxis: {
         categories: this.daysCity1.map(d =>
           d.time.toLocaleDateString('en-GB', { weekday: 'short' })
-        )
+        ),
+        title: {
+          text: 'Day'
+        }
       },
 
       series: [
@@ -192,16 +195,22 @@ export class CompareModal {
   }
 
   async setUnit() {
-    if (this.tempUnit() === 'C') this.tempUnit.set('F');
-    else this.tempUnit.set('C');
+    
 
     if (this.showCompare()) {
       await this.compare();
     }
+    if (this.tempUnit() === 'C') this.tempUnit.set('F');
+    else this.tempUnit.set('C');
   }
 
   close() {
+    console.log('Close');
     this.showCompare.set(false);
     this.closeModal.emit();
+  }
+  toggleCompare(){
+    console.log('Back');
+    this.showCompare.set(false);
   }
 }

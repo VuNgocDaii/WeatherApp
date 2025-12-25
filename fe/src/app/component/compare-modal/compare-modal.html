@@ -1,7 +1,7 @@
 <div class="compare-backdrop" (click)="close()"></div>
 
 
-<div class="compare-modal" (click)="$event.stopPropagation()">
+<div [ngClass]="showCompare() ? 'compare-modal' : 'compare-select'" (click)="$event.stopPropagation()">
 
     <h2 class="title">Compare Cities</h2>
 
@@ -34,8 +34,11 @@
         <button class="compare-btn" (click)="compare()" [disabled]="!city1 || !city2">
             Compare
         </button>
-        }
-
         <button class="cancel-btn" (click)="close()">Cancel</button>
+        }
+        @else {
+        <button class="cancel-btn" (click)="toggleCompare()">Back</button>
+        <button class="cancel-btn" (click)="close()">Close</button>
+        }
     </div>
 </div>

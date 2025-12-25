@@ -7,7 +7,7 @@ import { DayService } from '../../service/day-service';
 import { HourService } from '../../service/hour-service';
 import { Day } from '../../model/day';
 import { API_KEY } from '../../share/constants/constans';
-
+import { toTemp } from '../../share/pipe/deegrePipe';
 import {
   ChartComponent,
   ApexAxisChartSeries,
@@ -112,12 +112,7 @@ export class CompareModal {
     };
   }
 
-  toTemp(value: number): number {
-    if (this.tempUnit() === 'F') {
-      return Math.round(((value * 9) / 5 + 32) * 10) / 10;
-    }
-    return Math.round(value * 10) / 10;
-  }
+  
 
   async searchCity(e: any, index: number) {
     const q = e.query;
@@ -169,11 +164,11 @@ export class CompareModal {
       series: [
         {
           name: this.city1.cityName,
-          data: this.daysCity1.map(d => this.toTemp(d.maxTemp))
+          data: this.daysCity1.map(d => toTemp(d.maxTemp,unit))
         },
         {
           name: this.city2.cityName,
-          data: this.daysCity2.map(d => this.toTemp(d.maxTemp))
+          data: this.daysCity2.map(d => toTemp(d.maxTemp,unit))
         }
       ],
 

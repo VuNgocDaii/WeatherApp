@@ -23,9 +23,6 @@ import { compareDay } from '../../share/utils/date-util';
 import { Inject, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-
-
-
 type CityDTO = {
   cityName: string;
   lat: number;
@@ -291,4 +288,8 @@ export class Content {
     this.selectedCity.lon = city.lon;
     this.loadCurCityPage(false);
   }
+
+  @Output() openCompare = new EventEmitter<void>();
+
+
 }

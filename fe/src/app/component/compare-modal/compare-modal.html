@@ -1,0 +1,41 @@
+<div class="compare-backdrop" (click)="close()"></div>
+
+
+<div class="compare-modal" (click)="$event.stopPropagation()">
+
+    <h2 class="title">Compare Cities</h2>
+
+    @if (showCompare()) {
+
+    <div class="unit-toggle">
+        <button type="button" (click)="setUnit()" class="temp-btn">
+            °{{ tempUnit() === 'C' ? 'C' : 'F' }}
+        </button>
+    </div>
+    <apx-chart #chart [series]="chartOptions.series" [chart]="chartOptions.chart" [xaxis]="chartOptions.xaxis"
+        [yaxis]="chartOptions.yaxis" [dataLabels]="chartOptions.dataLabels" [stroke]="chartOptions.stroke"
+        [grid]="chartOptions.grid" [tooltip]="chartOptions.tooltip" [title]="chartOptions.title">
+    </apx-chart>
+
+    } @else {
+
+    <p-autoComplete [(ngModel)]="city1" [suggestions]="suggestions1" (completeMethod)="searchCity($event, 1)"
+        optionLabel="cityName" placeholder="City 1" styleClass="city-ac" inputStyleClass="city-ac-input">
+    </p-autoComplete>
+
+    <p-autoComplete [(ngModel)]="city2" [suggestions]="suggestions2" (completeMethod)="searchCity($event, 2)"
+        optionLabel="cityName" placeholder="City 2" styleClass="city-ac" inputStyleClass="city-ac-input">
+    </p-autoComplete>
+
+    }
+
+    <div class="actions">
+        @if (!showCompare()) {
+        <button class="compare-btn" (click)="compare()" [disabled]="!city1 || !city2">
+            Compare
+        </button>
+        }
+
+        <button class="cancel-btn" (click)="close()">Cancel</button>
+    </div>
+</div>

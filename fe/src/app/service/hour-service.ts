@@ -47,6 +47,7 @@ export class HourService {
   }
 
   async checkWeatherNow(lat: number, lon: number): Promise<Hour> {
+    console.log(lat,lon);
     const url =
       'https://api.open-meteo.com/v1/forecast?latitude=' +
       String(lat) +

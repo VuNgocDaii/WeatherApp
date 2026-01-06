@@ -1,0 +1,16 @@
+<div class="fav-overlay" (click)="close()"></div>
+
+<div class="fav-popup" >
+  <div class="fav-popup-header">
+    ⭐ Favourite Cities
+    <button (click)="close()">✕</button>
+  </div>
+
+  <div class="fav-popup-content">
+     <ul>
+      <li *ngFor="let city of favourites" (click)="openFavouriteCity(city)">
+        {{ city.cityName }} 
+      </li>
+    </ul>
+  </div>
+</div>

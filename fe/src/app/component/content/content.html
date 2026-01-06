@@ -20,9 +20,11 @@
     <div class="grid grid-nogutter city-info-container">
       <div style="width:5%; display:flex; align-items:flex-start; justify-content:center;margin-top:32px;">
         <button [pTooltip]="isFav ? 'Remove from favourite' : 'Add to favourite'" tooltipPosition="bottom"
-          tooltipEvent="hover" (click)="toggleFav(curCity.cityId)" [class.active]="isFav" class="fav-btn">
+          tooltipEvent="hover" (click)="openFavConfirm(curCity.cityId)" [class.active]="isFav" class="fav-btn">
+
           <i class="pi" [ngClass]="isFav ? 'pi-star-fill' : 'pi-star'"></i>
         </button>
+
       </div>
 
       <div class="col-7 flex-column city-info-status">
@@ -107,6 +109,7 @@
 
     }
   </div>
+
   @if (!loading()){
 
   <div class="col flex flex-column hub-button-container">
@@ -117,7 +120,7 @@
           Favourite List
         </button>
 
-        <div *ngIf="showFavourite" class="favourite-list">
+        <!-- <div *ngIf="showFavourite" class="favourite-list">
           <ul>
             @for (item of favourites; track item.cityId){
             <li (click)="loadCurFavorCityPage(item)" style="cursor: pointer;">
@@ -125,7 +128,7 @@
             </li>
             }
           </ul>
-        </div>
+        </div> -->
       </div>
       <button class="locate-btn" (click)="openCompare.emit()">
         Compare
@@ -168,4 +171,29 @@
     </div>
   </div>
   }
+  @if (showFavConfirm) {
+  <div class="confirm-overlay" (click)="closeFavConfirm()"></div>
+
+  <div class="confirm-popup">
+    <h3>
+      {{ pendingFavAction === 'add'
+          ? 'Add to favourites?'
+          : 'Remove from favourites?' }}
+    </h3>
+
+    <p>
+      {{ pendingFavAction === 'add'
+          ? 'This city will be added to your favourite list.'
+          : 'This city will be removed from your favourite list.' }}
+    </p>
+
+    <div class="confirm-actions">
+      <button class="btn cancel" (click)="closeFavConfirm()">Cancel</button>
+      <button class="btn confirm" (click)="confirmFavAction()">
+        {{ pendingFavAction === 'add' ? 'Add' : 'Remove' }}
+      </button>
+    </div>
+  </div>
+}
+
 </div>

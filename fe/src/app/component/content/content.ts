@@ -1,4 +1,4 @@
-import { Component, ApplicationRef, effect, Output, EventEmitter } from '@angular/core';
+import { Component, ApplicationRef, effect, Output, EventEmitter, Input } from '@angular/core';
 import { CityService } from '../../service/city-service';
 import { HourService } from '../../service/hour-service';
 import { signal } from '@angular/core';
@@ -22,7 +22,6 @@ import { getWmoIcon } from '../../share/utils/weather-code-util';
 import { compareDay } from '../../share/utils/date-util';
 import { Inject, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
 type CityDTO = {
   cityName: string;
   lat: number;
@@ -54,7 +53,7 @@ export class Content {
   lon: any = 0;
   lat: any = 0;
   //
-  curCity: any = '';
+  @Input() curCity: any = '';
   curDay = new Hour(new Date(), 0, 0, 0, 0, 0, 0, '');
 
   // 24h in day
@@ -87,7 +86,9 @@ export class Content {
   async ngOnInit() {
     this.loadCurCityPage(true);
   }
-
+  async ngOnChanges() {
+    this.loadCurFavorCityPage(this.curCity);
+  }
   onSearchCity(e: any) {
     const q = String(e.query ?? '').trim();
     console.log('Search String:' + q);
@@ -268,15 +269,14 @@ export class Content {
 
   showFavourite = false;
 
-  favourites: City[] = [
-  ];
-
+  favourites: City[] = [];
+  @Output() favouriteListChange = new EventEmitter<City[]>();
   toggleFavourite() {
     console.log('???');
-    this.favourites = this.cityService
-      .loadFavourCity()
-      .sort((a, b) => a.cityName.localeCompare(b.cityName));
-
+    this.favourites = this.cityService.loadFavourCity().sort((a, b) => a.cityName.localeCompare(b.cityName));
+    console.log(this.favourites);
+    this.openFavourite.emit()
+    this.favouriteListChange.emit(this.favourites);
     this.showFavourite = !this.showFavourite;
   }
 
@@ -290,6 +290,31 @@ export class Content {
   }
 
   @Output() openCompare = new EventEmitter<void>();
+  @Output() openFavourite = new EventEmitter<void>();
 
+  showFavConfirm = false;
+  pendingFavAction: string = '';
+  pendingCityId?: number;
+
+  openFavConfirm(cityId: number) {
+    this.pendingCityId = cityId;
+
+    this.pendingFavAction = this.isFav ? 'remove' : 'add';
+    this.showFavConfirm = true;
+  }
+
+  confirmFavAction() {
+    if (this.pendingCityId == null) return;
+
+    this.toggleFav(this.pendingCityId);
+
+    this.closeFavConfirm();
+  }
+
+  closeFavConfirm() {
+    this.showFavConfirm = false;
+    this.pendingFavAction = '';
+    this.pendingCityId = undefined;
+  }
 
 }

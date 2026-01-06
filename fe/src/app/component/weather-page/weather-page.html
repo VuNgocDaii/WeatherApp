@@ -3,16 +3,27 @@
   <img class="bg-img" src="{{ key | backgr : dn }}" alt="weather background" />
   <app-side-bar class="col-1 sidebar"></app-side-bar>
   @if (curUrl === '/') {
-  <app-content class="col-11 content" (weatherChange)="onWeatherChange($event)"  (openCompare)="openCompare()"></app-content>
+  <app-content class="col-11 content" (weatherChange)="onWeatherChange($event)"
+    (openCompare)="openCompare()"
+    (openFavourite)="openFavourite()"
+    (favouriteListChange)="favouritesListChange($event)"
+    [curCity]="cityChange"
+    ></app-content>
   }
   @else {
   <app-map class="map"></app-map>
   }
   @if (showCompare) {
-  <app-compare-modal
-    (closeModal)="closeCompare()">
+  <app-compare-modal (closeModal)="closeCompare()">
   </app-compare-modal>
-}
+  }
+  @if (showFavourite) {
+    <app-favourite-list (closeFavourite)="closeFavourite()"
+      [favourites]="favourites"
+      (newCity)="loadNewCity($event)"
+    >
 
+    </app-favourite-list>
+  }  
 
 </main>
